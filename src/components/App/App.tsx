@@ -1,7 +1,6 @@
 import { useState } from 'react';
-
 import toast, { Toaster } from 'react-hot-toast';
-import fetchMovies, { type FetchMoviesParams } from '../../services/movieService';
+import fetchMovies from '../../services/movieService';
 import type { Movie } from '../../types/movie';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import Loader from '../Loader/Loader';
@@ -16,16 +15,18 @@ const App = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  const fetchData = async (params: FetchMoviesParams) => {
+  // 🧠 Исправлено: теперь функция принимает строку запроса, а не объект
+  const handleSearch = async (query: string) => {
     try {
       setLoading(true);
       setError(null);
 
-      const data = await fetchMovies(params);
+      const data = await fetchMovies({ query }); // передаём объект с query
 
       if (data.results.length === 0) {
+        // 🧹 Исправлено: очищаем старые результаты
+        setMovies([]);
         toast('No movies found for your request.', {
-          icon: '😢',
           style: {
             borderRadius: '10px',
             background: '#ff9797ff',
@@ -50,13 +51,16 @@ const App = () => {
   return (
     <>
       <Toaster position="bottom-left" reverseOrder={false} />
-      <SearchBar onSubmit={fetchData} />
+      {/* 🧩 Исправлено: передаём handleSearch, не fetchData */}
+      <SearchBar onSubmit={handleSearch} />
 
       {loading && <Loader />}
       {error && <ErrorMessage />}
       <MovieGrid movies={movies} onSelect={handleSelect} />
 
-      {selectedMovie && <MovieModal movie={selectedMovie} onClose={() => setSelectedMovie(null)} />}
+      {selectedMovie && (
+        <MovieModal movie={selectedMovie} onClose={() => setSelectedMovie(null)} />
+      )}
     </>
   );
 };
