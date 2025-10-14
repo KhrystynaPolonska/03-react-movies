@@ -15,16 +15,13 @@ const App = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  // 🧠 Исправлено: теперь функция принимает строку запроса, а не объект
   const handleSearch = async (query: string) => {
     try {
       setLoading(true);
       setError(null);
 
-      const data = await fetchMovies({ query }); // передаём объект с query
-
+      const data = await fetchMovies({ query }); 
       if (data.results.length === 0) {
-        // 🧹 Исправлено: очищаем старые результаты
         setMovies([]);
         toast('No movies found for your request.', {
           style: {
@@ -51,7 +48,6 @@ const App = () => {
   return (
     <>
       <Toaster position="bottom-left" reverseOrder={false} />
-      {/* 🧩 Исправлено: передаём handleSearch, не fetchData */}
       <SearchBar onSubmit={handleSearch} />
 
       {loading && <Loader />}
