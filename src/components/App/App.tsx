@@ -16,26 +16,39 @@ const App = () => {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   const handleSearch = async (query: string) => {
+    if (!query.trim()) {
+      toast('Please enter a search term.', {
+        style: {
+          borderRadius: '10px',
+          background: '#ffd699',
+          color: '#000',
+        },
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
 
-      const data = await fetchMovies({ query }); 
-      if (data.results.length === 0) {
+      const data = await fetchMovies({ query });
+
+      if (!data.results || data.results.length === 0) {
         setMovies([]);
         toast('No movies found for your request.', {
           style: {
             borderRadius: '10px',
-            background: '#ff9797ff',
-            color: '#000000ff',
+            background: '#ff9797',
+            color: '#000',
           },
         });
-      } else {
-        setMovies(data.results);
+        return;
       }
+
+      setMovies(data.results);
     } catch (err) {
-      setError('Something went wrong. Please try again later.');
       console.error(err);
+      setError('Something went wrong. Please try again later.');
     } finally {
       setLoading(false);
     }
