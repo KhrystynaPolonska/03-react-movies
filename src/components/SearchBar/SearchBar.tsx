@@ -1,19 +1,17 @@
 import toast, { Toaster } from 'react-hot-toast';
-import type { FetchMoviesParams } from '../../services/movieService';
 import './SearchBar.module.css';
 import styles from './SearchBar.module.css';
 
 interface SearchBarProps {
-  onSubmit: (params: FetchMoviesParams) => void;
+  onSubmit: (query: string) => void; 
 }
 
 const SearchBar = ({ onSubmit }: SearchBarProps) => {
   const handleSubmit = (formData: FormData) => {
     const query = formData.get('query') as string;
 
-    if (query === '') {
+    if (!query.trim()) {
       toast('Please enter your search query.', {
-        icon: '🥺',
         style: {
           borderRadius: '10px',
           background: '#3f3f3fff',
@@ -23,7 +21,7 @@ const SearchBar = ({ onSubmit }: SearchBarProps) => {
       return;
     }
 
-    onSubmit({ query });
+    onSubmit(query.trim()); 
   };
 
   return (
